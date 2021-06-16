@@ -1,0 +1,103 @@
+baseURL = "https://gohugo.io"
+title = "Skylar's Programming Blog"
+author = "Skylar Gay"
+theme = "anatole"
+paginate = 3
+languageCode = "en"
+DefaultContentLanguage = "en"
+enableInlineShortcodes = true
+# prevent build failures when using Hugo's Instagram shortcode due to deprecated Instagram API.
+# See https://github.com/gohugoio/hugo/issues/7228#issuecomment-714490456
+ignoreErrors = ["error-remote-getjson"]
+
+# Syntax highlighting
+pygmentsUseClasses = true
+pygmentsCodeFences = true
+pygmentsCodefencesGuessSyntax = true
+
+[params]
+title = "Skylar's Programming Blog"
+author = "Skylar Gay"
+profilePicture = "images/profile.jpg"
+favicon = "favicons/"
+mainSections = ["post"]
+doNotLoadAnimations = false
+displayMode = "dark"
+
+## Math settings
+[params.math]
+enable = true  # options: true, false. Enable math support globally, default: false. You can always enable math on per page.
+use = "mathjax"  # options: "katex", "mathjax". default is "katex".
+
+[[params.socialIcons]]
+icon = "fab fa-gitlab"
+title = "GitLab"
+url = "https://gitlab.com/StellarStorm"
+
+[[params.socialIcons]]
+icon = "fab fa-github"
+title = "GitHub"
+url = "https://github.com/StellarStorm"
+
+[[params.socialIcons]]
+icon = "fab fa-twitter"
+title = "Twitter"
+url = "https://twitter.com/sgi386"
+
+[[params.socialIcons]]
+icon = "fab fa-strava"
+title = "Strava"
+url = "https://www.strava.com/athletes/69920138"
+
+
+[menu]
+
+  [[menu.main]]
+  name = "Posts"
+  weight = 200
+  identifier = "posts"
+  url = "/post/"
+
+  [[menu.main]]
+    identifier = "about"
+    name = "About Me"
+    url = "/about/"
+    weight = 300
+
+  [[menu.main]]
+  name = "Home"
+  identifier = "home"
+  weight = 100
+  url = "/"
+
+[taxonomies]
+category = "categories"
+tag = "tags"
+series = "series"
+
+[privacy]
+
+  [privacy.vimeo]
+    disabled = false
+    simple = true
+
+  [privacy.twitter]
+    disabled = false
+    enableDNT = true
+    simple = true
+
+  [privacy.instagram]
+    disabled = false
+    simple = true
+
+  [privacy.youtube]
+    disabled = false
+    privacyEnhanced = true
+
+[services]
+
+  [services.instagram]
+    disableInlineCSS = true
+
+  [services.twitter]
+    disableInlineCSS = true
