@@ -1,0 +1,70 @@
+<!doctype html><html dir=ltr lang=en data-theme><head><title>Skylar Gay | Region-Overlap Metrics/Losses</title><meta charset=utf-8><meta name=generator content="Hugo 0.83.1"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name=description content><link rel=stylesheet href=/Deep-Learning-Notes/css/main.min.f79a5de55310cc058fc81804d033ddb955937d778bd533d9ea05b1c798501013.css integrity="sha256-95pd5VMQzAWPyBgE0DPduVWTfXeL1TPZ6gWxx5hQEBM=" crossorigin=anonymous type=text/css><link rel=stylesheet href=/Deep-Learning-Notes/css/markupHighlight.min.f798cbda9aaa38f89eb38be6414bd082cfd71a6780375cbf67b6d2fb2b96491e.css integrity="sha256-95jL2pqqOPies4vmQUvQgs/XGmeAN1y/Z7bS+yuWSR4=" crossorigin=anonymous type=text/css><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA==" crossorigin=anonymous><link rel="shortcut icon" href=/Deep-Learning-Notes/favicons/favicon.ico type=image/x-icon><link rel=apple-touch-icon sizes=180x180 href=/Deep-Learning-Notes/favicons/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/Deep-Learning-Notes/favicons/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/Deep-Learning-Notes/favicons/favicon-16x16.png><link rel=canonical href=/Deep-Learning-Notes/post/region_loss/><script type=text/javascript src=/Deep-Learning-Notes/js/anatole-header.min.0c05c0a90d28c968a1cad4fb31abd0b8e1264e788ccefed022ae1d3b6f627514.js integrity="sha256-DAXAqQ0oyWihytT7MavQuOEmTniMzv7QIq4dO29idRQ=" crossorigin=anonymous></script><script type=text/javascript src=/Deep-Learning-Notes/js/anatole-theme-switcher.min.7fd87181cdd7e8413aa64b6867bb32f3a8dc242e684fc7d5bbb9f600dbc2b6eb.js integrity="sha256-f9hxgc3X6EE6pktoZ7sy86jcJC5oT8fVu7n2ANvCtus=" crossorigin=anonymous></script><meta name=twitter:card content="summary"><meta name=twitter:title content="Region-Overlap Metrics/Losses"><meta name=twitter:description content="Overlap metrics of two regions are excellent ways to quantify how well a model is able to predict segmentation mappings.
+All code examples below are simply psuedo-code that has been simplified for clarity. For actual loss functions, RadIO has ready-to-go examples under the Apache 2.0 license.
+Left: Intersection of two sets. Right: Union of two sets [1]
+Jaccard The Jaccard index, also called IoU (Intersection over Union), is perhaps one of the easiest metrics to visualize."></head><body><div class="sidebar animated fadeInDown"><div class=logo-title><div class=title><img src=/Deep-Learning-Notes/images/profile.jpg alt="profile picture"><h3 title><a href=/>Skylar's Programming Blog</a></h3><div class=description><p></p></div></div></div><ul class=social-links><li><a href=https://gitlab.com/StellarStorm rel=me aria-label=GitLab><i class="fab fa-gitlab fa-2x" aria-hidden=true></i></a></li><li><a href=https://github.com/StellarStorm rel=me aria-label=GitHub><i class="fab fa-github fa-2x" aria-hidden=true></i></a></li><li><a href=https://twitter.com/sgi386 rel=me aria-label=Twitter><i class="fab fa-twitter fa-2x" aria-hidden=true></i></a></li><li><a href=https://www.strava.com/athletes/69920138 rel=me aria-label=Strava><i class="fab fa-strava fa-2x" aria-hidden=true></i></a></li></ul><div class=footer><div class=by_farbox>&copy; Skylar Gay 2021</div></div></div><div class=main><div class="page-top animated fadeInDown"><a role=button class=navbar-burger data-target=navMenu aria-label=menu aria-expanded=false><span aria-hidden=true></span><span aria-hidden=true></span><span aria-hidden=true></span></a><ul class=nav id=navMenu><li><a href=/Deep-Learning-Notes/ title>Home</a></li><li><a href=/Deep-Learning-Notes/post/ title>Posts</a></li><li><a href=/Deep-Learning-Notes/about/ title>About Me</a></li><li class=theme-switch-item><a class=theme-switch title="Switch Theme"><i class="fas fa-adjust fa-fw" aria-hidden=true></i></a></li></ul></div><div class=autopagerize_page_element><div class=content><div class="post animated fadeInDown"><div class=post-content><div class=post-title><h3>Region-Overlap Metrics/Losses</h3><div class=info><em class="fas fa-calendar-day"></em><span class=date>Wed, Jun 16, 2021</span>
+<em class="fas fa-stopwatch"></em><span class=reading-time>5-minute read</span></div></div><p>Overlap metrics of two regions are excellent ways to quantify how well a model
+is able to predict segmentation mappings.</p><p>All code examples below are simply psuedo-code that has been simplified for
+clarity. For actual loss functions,
+<a href=https://analysiscenter.github.io/radio/_modules/radio/models/keras/losses.html>RadIO</a>
+has ready-to-go examples under the Apache 2.0 license.</p><p><img src=/images/posts/region_loss/set_intersection.png alt=intersection>
+<img src=/images/posts/region_loss/set_union.png alt=union></p><p><em>Left: Intersection of two sets. Right: Union of two sets [1]</em></p><h2 id=jaccard>Jaccard</h2><p>The Jaccard index, also called IoU (Intersection over Union), is perhaps one of
+the easiest metrics to visualize. It&rsquo;s simply the ratio of the intersection of
+two segmented regions, or the number of points that are inside both
+segmentations, to the union of two segmented regions, or the number of points
+that are inside either (or both) segmentations.</p><p>Mathmatically, this looks like</p><p>$$ J(A, B) = \frac{|A \cap B|}{|A \cup B|} $$</p><p><em>Note that $|A|$ indicates the &ldquo;cardinality&rdquo; or the number of elements in set
+$A$, not the absolute value. This is true for the other sets as well</em></p><p>This can be rewritten as the ratio between the intersection and the sum of
+all points in set $A$ and all points in set $B$ minus the intersection</p><p>$$ J(A, B) = \frac{|A \cap B|}{|A| + |B| - |A \cap B|} $$</p><p>It may not be immediately clear how this is equivalent - why is intersection
+being subtracted? In the denominator, adding all points from set $A$ and set B
+means that the points in the intersection $A \cap B$, which are by definition
+common to both sets, are added twice. Subtracting one of these intersections
+makes the expression in the denominator equivalent to the union of the sets.</p><p>That is, the union of sets $A$ and $B$ can be written as</p><p>$$\begin{eqnarray}
+|A \cup B| &=& {\overbrace{|A - B|}^\text{A complement B}} + |A \cap B| + {\overbrace{|A - B|}^\text{B complement A}} \\\<br>&=& |A - B| + |B - A| + |A \cap B|
+\end{eqnarray}$$</p><p>The sum of sets $A$ and $B$ can be written as</p><p>$$\begin{eqnarray}
+|A| + |B| &=& {\overbrace{|A - B|}^\text{A complement B}} + |A \cap B| + {\overbrace{|A - B|}^\text{B complement A}} + |A \cap B| \\\<br>&=& |A - B| + |B - A| + \textcolor{red}{2}|A \cap B|
+\end{eqnarray}$$</p><p>Thus, subtracting the intersection from the summation of sets $A$ and $B$ makes this
+equivalent to the union of the sets.</p><p>$$A| \cup |B| = |A| + |B| - |A \cap B|$$</p><p>The second expression yields itself particularly well to code implementations.
+In TensorFlow, this might be written as follows, where y_true is the ground
+truth segmentation and y_pred is the model prediction. Both of these must be
+boolean tensors.</p><div class=highlight><pre class=chroma><code class=language-python data-lang=python><span class=k>def</span> <span class=nf>jaccard</span><span class=p>(</span><span class=n>y_true</span><span class=p>,</span> <span class=n>y_pred</span><span class=p>):</span>
+    <span class=n>y_true</span> <span class=o>=</span> <span class=n>K</span><span class=o>.</span><span class=n>flatten</span><span class=p>(</span><span class=n>y_true</span><span class=p>)</span>
+    <span class=n>y_pred</span> <span class=o>=</span> <span class=n>K</span><span class=o>.</span><span class=n>flatten</span><span class=p>(</span><span class=n>y_pred</span><span class=p>)</span>
+
+    <span class=n>intersection</span> <span class=o>=</span> <span class=n>K</span><span class=o>.</span><span class=n>sum</span><span class=p>(</span><span class=n>y_true</span> <span class=o>*</span> <span class=n>y_pred</span><span class=p>)</span>
+
+    <span class=n>jac</span> <span class=o>=</span> <span class=n>intersection</span> <span class=o>/</span> <span class=p>(</span><span class=n>K</span><span class=o>.</span><span class=n>sum</span><span class=p>(</span><span class=n>y_true</span> <span class=o>+</span> <span class=n>y_pred</span><span class=p>)</span> <span class=o>-</span> <span class=n>intersection</span><span class=p>)</span>
+    <span class=k>return</span> <span class=n>jac</span>
+</code></pre></div><p>The Jaccard index increases as the two regions have more and more overlap, to
+a maximum value of 1 if there is perfect agreement between the two regions, and
+decreases to a minimum value of 0 if there is no overlap between the two
+regions. Thus, this provides a simple but effective metric for determining how
+well the predicted segmentation from a model agrees with the ground truth.</p><p>Jaccard loss (also called Jaccard distance) is simply 1 - the jaccard score.
+Thus, a value of 0 would indicate perfect agreement, while a value of 1 would
+indicate no overlap.</p><h2 id=dice>Dice</h2><p>The Dice coefficient, also called Sørensen–Dice or F score and abbreviated DSC, is a
+second region overlap metric. It is functionally equivalent to the Jaccard
+index, in fact, a score in one metric can easily be converted to a score in the
+other. DSC is the ratio of twice the intersection of two sets to the number
+of elements in each set.</p><p>DSC is one of the most common metrics for segmentation models, and, adapted
+somewhat, equally as common as a loss function during training.</p><p>Mathematically, it can be expressed as</p><p>$$S(A, B) = \frac{2 |A \cap B|}{|A| + |B|}$$</p><p><em>As before, $|A|$ indicates cardinality, not absolute value.</em></p><p>In Tensorflow, this might be written as follows, where y_true is the ground
+truth segmentation and y_pred is the model prediction. Both of these must be
+boolean tensors.</p><div class=highlight><pre class=chroma><code class=language-python data-lang=python><span class=k>def</span> <span class=nf>dsc</span><span class=p>(</span><span class=n>y_true</span><span class=p>,</span> <span class=n>y_pred</span><span class=p>):</span>
+    <span class=n>y_true</span> <span class=o>=</span> <span class=n>K</span><span class=o>.</span><span class=n>flatten</span><span class=p>(</span><span class=n>y_true</span><span class=p>)</span>
+    <span class=n>y_pred</span> <span class=o>=</span> <span class=n>K</span><span class=o>.</span><span class=n>flatten</span><span class=p>(</span><span class=n>y_pred</span><span class=p>)</span>
+
+    <span class=n>intersection</span> <span class=o>=</span> <span class=n>K</span><span class=o>.</span><span class=n>sum</span><span class=p>(</span><span class=n>y_true</span> <span class=o>*</span> <span class=n>y_pred</span><span class=p>)</span>
+
+    <span class=n>n_points</span> <span class=o>=</span> <span class=n>K</span><span class=o>.</span><span class=n>sum</span><span class=p>(</span><span class=n>A</span><span class=p>)</span> <span class=o>+</span> <span class=n>K</span><span class=o>.</span><span class=n>sum</span><span class=p>(</span><span class=n>B</span><span class=p>)</span>
+
+    <span class=k>return</span> <span class=mi>2</span> <span class=o>*</span> <span class=n>intersection</span> <span class=o>/</span> <span class=n>n_points</span>
+</code></pre></div><p>Like the Jaccard index, possible scores range from 0 to 1, with 1 indicating
+perfect agreement and 0 indicated complete disagreement. Thus, turning this
+into a loss function would simply be 1 - the DSC score.</p><h3 id=jaccard-vs-dice>Jaccard vs. Dice</h3><p><img src=/images/posts/region_loss/jac_vs_dsc.png alt=jaccard_or_dice></p><p><em>Left: Illustration of Jaccard. Right: Illustration of DSC [2]</em></p><p>Both of these metrics are similar, positively correlated, and can be converted
+into each other. However, they emphasize different things.</p><p>The Jaccard index tends to penalize single bad examples, giving an estimation
+of the &ldquo;worst case scenario&rdquo; for a given model. Conversely, DSC gives closer
+to an indication of the average performance of a model [3]. The appropriate
+choice for training a model (or to use in combination with another type of
+loss, such as categorical crossentropy) depends on the project goals and
+acceptable outcomes. Intuitively I suspect that a model trained using DSC loss is
+more likely to give &ldquo;homogenous&rdquo; results, i.e. most predictions are either poor,
+ok, or good; wherease one trained using Jaccard loss may give both excellent
+and sub-par segmentations.</p><h2 id=references>References</h2><p>[1] <a href=https://en.wikipedia.org/wiki/Jaccard_index>Wikipedia</a></p><p>[2] <a href=https://towardsdatascience.com/metrics-to-evaluate-your-semantic-segmentation-model-6bcb99639aa2>Ekin Tiu</a></p><p>[3] <a href=https://stats.stackexchange.com/a/276144>willem</a></p></div><div class=post-footer><div class=info><span class=separator><a class=category href=/Deep-Learning-Notes/categories/deep-learning/>deep learning</a></span>
+<span class=separator><a class=tag href=/Deep-Learning-Notes/tags/segmentation/>segmentation</a></span></div></div></div></div></div></div><script>MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$'],['\\[','\\]']],processEscapes:!0,processEnvironments:!0},options:{skipHtmlTags:['script','noscript','style','textarea','pre']}},window.addEventListener('load',a=>{document.querySelectorAll("mjx-container").forEach(function(a){a.parentElement.classList+='has-jax'})})</script><script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script><script type=text/javascript id=MathJax-script async src=https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js></script></body></html>
