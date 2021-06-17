@@ -56,4 +56,5 @@ solely my own and do not reflect the opinions of my employer or anyone else,
 nor do they imply endorsement of any kind.
 
 I do my best to be correct, but if you've noticed a mistake (no matter how
-simple) please let me know [here](TODO).
+simple) please let me know
+[here](https://github.com/StellarStorm/Deep-Learning-Notes/issues)).
