@@ -106,8 +106,8 @@ On its own, SGD is good but often slow in terms of finding the minima of the los
 function for the dataset, struggling to find the best route to the minima and
 sometimes confused by ravines in the loss landscape.
 
-![SGD_no_momentum](/images/posts/grad_optim/wo_momentum.gif)
-![SGD_momentum](/images/posts/grad_optim/with_momentum.gif)
+![SGD_no_momentum](/Deep-Learning-Notes/images/posts/grad_optim/wo_momentum.gif)
+![SGD_momentum](/Deep-Learning-Notes/images/posts/grad_optim/with_momentum.gif)
 
 *Left: SGD without momentum, right: SGD with momentum <cite>[1]</cite>*
 
@@ -165,7 +165,7 @@ Intuitively, you can think of this as a four-step process <cite>[3]</cite>
 
 
 
-![Nesterov](/images/posts/grad_optim/nesterov.jpeg)
+![Nesterov](/Deep-Learning-Notes/images/posts/grad_optim/nesterov.jpeg)
 
 *Figure courtesy Stanford CS213n <cite>[5]</cite>*
 

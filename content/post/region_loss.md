@@ -16,8 +16,8 @@ clarity. For actual loss functions,
 [RadIO](https://analysiscenter.github.io/radio/_modules/radio/models/keras/losses.html)
 has ready-to-go examples under the Apache 2.0 license.
 
-![intersection](/images/posts/region_loss/set_intersection.png)
-![union](/images/posts/region_loss/set_union.png)
+![intersection](/Deep-Learning-Notes/images/posts/region_loss/set_intersection.png)
+![union](/Deep-Learning-Notes/images/posts/region_loss/set_union.png)
 
 *Left: Intersection of two sets. Right: Union of two sets <cite>[1]</cite>*
 
@@ -131,7 +131,7 @@ into a loss function would simply be 1 - the DSC score.
 
 ### Jaccard vs. Dice
 
-![jaccard_or_dice](/images/posts/region_loss/jac_vs_dsc.png)
+![jaccard_or_dice](/Deep-Learning-Notes/images/posts/region_loss/jac_vs_dsc.png)
 
 *Left: Illustration of Jaccard. Right: Illustration of DSC <cite>[2]</cite>*
 
