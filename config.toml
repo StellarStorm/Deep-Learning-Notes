@@ -16,7 +16,7 @@ pygmentsCodeFences = true
 pygmentsCodefencesGuessSyntax = true
 
 [params]
-title = "Skylar's Programming Blog"
+title = "Skylar's Programming Notes"
 author = "Skylar Gay"
 profilePicture = "images/profile.jpg"
 favicon = "favicons/"
