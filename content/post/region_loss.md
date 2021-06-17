@@ -64,7 +64,7 @@ $$\begin{eqnarray}
 Thus, subtracting the intersection from the summation of sets $A$ and $B$ makes this
 equivalent to the union of the sets.
 
-$$A| \cup |B| = |A| + |B| - |A \cap B|$$
+$$|A| \cup |B| \equiv |A| + |B| - |A \cap B|$$
 
 The second expression yields itself particularly well to code implementations.
 In TensorFlow, this might be written as follows, where y_true is the ground
