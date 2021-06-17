@@ -1,5 +1,5 @@
-baseURL = "https://stellarstorm.github.io/Deep-Learning-Notes"
-title = "Skylar's Programming Blog"
+baseURL = "https://stellarstorm.github.io/Deep-Learning-Notes/"
+title = "Skylar's Programming Notes"
 author = "Skylar Gay"
 theme = "anatole"
 paginate = 3
