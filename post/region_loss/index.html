@@ -6,8 +6,8 @@ Jaccard The Jaccard index, also called IoU (Intersection over Union), is perhaps
 is able to predict segmentation mappings.</p><p>All code examples below are simply psuedo-code that has been simplified for
 clarity. For actual loss functions,
 <a href=https://analysiscenter.github.io/radio/_modules/radio/models/keras/losses.html>RadIO</a>
-has ready-to-go examples under the Apache 2.0 license.</p><p><img src=/images/posts/region_loss/set_intersection.png alt=intersection>
-<img src=/images/posts/region_loss/set_union.png alt=union></p><p><em>Left: Intersection of two sets. Right: Union of two sets [1]</em></p><h2 id=jaccard>Jaccard</h2><p>The Jaccard index, also called IoU (Intersection over Union), is perhaps one of
+has ready-to-go examples under the Apache 2.0 license.</p><p><img src=/Deep-Learning-Notes/images/posts/region_loss/set_intersection.png alt=intersection>
+<img src=/Deep-Learning-Notes/images/posts/region_loss/set_union.png alt=union></p><p><em>Left: Intersection of two sets. Right: Union of two sets [1]</em></p><h2 id=jaccard>Jaccard</h2><p>The Jaccard index, also called IoU (Intersection over Union), is perhaps one of
 the easiest metrics to visualize. It&rsquo;s simply the ratio of the intersection of
 two segmented regions, or the number of points that are inside both
 segmentations, to the union of two segmented regions, or the number of points
@@ -57,7 +57,7 @@ boolean tensors.</p><div class=highlight><pre class=chroma><code class=language-
     <span class=k>return</span> <span class=mi>2</span> <span class=o>*</span> <span class=n>intersection</span> <span class=o>/</span> <span class=n>n_points</span>
 </code></pre></div><p>Like the Jaccard index, possible scores range from 0 to 1, with 1 indicating
 perfect agreement and 0 indicated complete disagreement. Thus, turning this
-into a loss function would simply be 1 - the DSC score.</p><h3 id=jaccard-vs-dice>Jaccard vs. Dice</h3><p><img src=/images/posts/region_loss/jac_vs_dsc.png alt=jaccard_or_dice></p><p><em>Left: Illustration of Jaccard. Right: Illustration of DSC [2]</em></p><p>Both of these metrics are similar, positively correlated, and can be converted
+into a loss function would simply be 1 - the DSC score.</p><h3 id=jaccard-vs-dice>Jaccard vs. Dice</h3><p><img src=/Deep-Learning-Notes/images/posts/region_loss/jac_vs_dsc.png alt=jaccard_or_dice></p><p><em>Left: Illustration of Jaccard. Right: Illustration of DSC [2]</em></p><p>Both of these metrics are similar, positively correlated, and can be converted
 into each other. However, they emphasize different things.</p><p>The Jaccard index tends to penalize single bad examples, giving an estimation
 of the &ldquo;worst case scenario&rdquo; for a given model. Conversely, DSC gives closer
 to an indication of the average performance of a model [3]. The appropriate
