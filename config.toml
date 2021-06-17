@@ -22,7 +22,6 @@ profilePicture = "images/profile.jpg"
 favicon = "favicons/"
 mainSections = ["post"]
 doNotLoadAnimations = false
-displayMode = "dark"
 
 ## Math settings
 [params.math]
