@@ -1,0 +1,105 @@
+<!doctype html><html dir=ltr lang=en data-theme=light><head><title>Skylar Gay | Experiences in Upgrading a DGX Station</title><meta charset=utf-8><meta name=generator content="Hugo 0.83.1"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name=description content="from . import skykit-learn"><link rel=stylesheet href=/Deep-Learning-Notes/css/main.min.f79a5de55310cc058fc81804d033ddb955937d778bd533d9ea05b1c798501013.css integrity="sha256-95pd5VMQzAWPyBgE0DPduVWTfXeL1TPZ6gWxx5hQEBM=" crossorigin=anonymous type=text/css><link rel=stylesheet href=/Deep-Learning-Notes/css/markupHighlight.min.f798cbda9aaa38f89eb38be6414bd082cfd71a6780375cbf67b6d2fb2b96491e.css integrity="sha256-95jL2pqqOPies4vmQUvQgs/XGmeAN1y/Z7bS+yuWSR4=" crossorigin=anonymous type=text/css><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA==" crossorigin=anonymous><link rel="shortcut icon" href=/Deep-Learning-Notes/favicons/favicon.ico type=image/x-icon><link rel=apple-touch-icon sizes=180x180 href=/Deep-Learning-Notes/favicons/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/Deep-Learning-Notes/favicons/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/Deep-Learning-Notes/favicons/favicon-16x16.png><link rel=canonical href=/Deep-Learning-Notes/post/dgx_upgrade/><script type=text/javascript src=/Deep-Learning-Notes/js/anatole-header.min.0c05c0a90d28c968a1cad4fb31abd0b8e1264e788ccefed022ae1d3b6f627514.js integrity="sha256-DAXAqQ0oyWihytT7MavQuOEmTniMzv7QIq4dO29idRQ=" crossorigin=anonymous></script><script type=text/javascript src=/Deep-Learning-Notes/js/anatole-theme-switcher.min.7fd87181cdd7e8413aa64b6867bb32f3a8dc242e684fc7d5bbb9f600dbc2b6eb.js integrity="sha256-f9hxgc3X6EE6pktoZ7sy86jcJC5oT8fVu7n2ANvCtus=" crossorigin=anonymous></script><meta name=twitter:card content="summary"><meta name=twitter:title content="Experiences in Upgrading a DGX Station"><meta name=twitter:description content="Recently I&rsquo;ve begun maintaining an older-model DGX station (V100 GPUs). This machine has been in our lab for many years and has been instrumental in our research in fully-automated radiotherapy planning. However, it hasn&rsquo;t been updated in a long time. Still running the original DGXOS 3 (Ubuntu 16.04) and CUDA libraries, it didn&rsquo;t support our TensorFlow 2 Docker or Singularity images.
+The Nvidia documentation is rather good in listing the steps needed and possible conflicts during the upgrade process."></head><body><div class="sidebar animated fadeInDown"><div class=logo-title><div class=title><img src=/Deep-Learning-Notes/images/profile.jpg alt="profile picture"><h3 title><a href=/>Skylar's Programming Notes</a></h3><div class=description><p>from . import skykit-learn</p></div></div></div><ul class=social-links><li><a href=https://gitlab.com/StellarStorm rel=me aria-label=GitLab><i class="fab fa-gitlab fa-2x" aria-hidden=true></i></a></li><li><a href=https://github.com/StellarStorm rel=me aria-label=GitHub><i class="fab fa-github fa-2x" aria-hidden=true></i></a></li><li><a href=https://twitter.com/sgi386 rel=me aria-label=Twitter><i class="fab fa-twitter fa-2x" aria-hidden=true></i></a></li><li><a href=https://www.strava.com/athletes/69920138 rel=me aria-label=Strava><i class="fab fa-strava fa-2x" aria-hidden=true></i></a></li></ul><div class=footer><div class=by_farbox>&copy; Skylar Gay 2021</div></div></div><div class=main><div class="page-top animated fadeInDown"><a role=button class=navbar-burger data-target=navMenu aria-label=menu aria-expanded=false><span aria-hidden=true></span><span aria-hidden=true></span><span aria-hidden=true></span></a><ul class=nav id=navMenu><li><a href=/Deep-Learning-Notes/ title>Home</a></li><li><a href=/Deep-Learning-Notes/post/ title>Posts</a></li><li><a href=/Deep-Learning-Notes/about/ title>About Me</a></li><li class=theme-switch-item><a class=theme-switch title="Switch Theme"><i class="fas fa-adjust fa-fw" aria-hidden=true></i></a></li></ul></div><div class=autopagerize_page_element><div class=content><div class="post animated fadeInDown"><div class=post-content><div class=post-title><h3>Experiences in Upgrading a DGX Station</h3><div class=info><em class="fas fa-calendar-day"></em><span class=date>Fri, Jun 18, 2021</span>
+<em class="fas fa-stopwatch"></em><span class=reading-time>5-minute read</span></div></div><p>Recently I&rsquo;ve begun maintaining an older-model DGX station (V100 GPUs). This
+machine has been in our lab for many years and has been instrumental in our
+research in
+<a href=https://rpa.mdanderson.org/>fully-automated radiotherapy planning</a>. However,
+it hasn&rsquo;t been updated in a long time. Still running the original DGXOS 3
+(Ubuntu 16.04) and CUDA libraries, it didn&rsquo;t support our TensorFlow 2
+Docker or Singularity images.</p><p>The
+<a href=https://docs.nvidia.com/dgx/dgx-station-user-guide/index.html#upgrading-dgx-os-software-release>Nvidia documentation</a>
+is rather good in listing the steps needed and possible conflicts during the
+upgrade process.
+However, I ran into a few unexpected snags that are worth documenting. During
+the initial <code>apt full-upgrade</code> to bring the DGXOS 3 up to the latest packages
+within that series, the upgrade process got hung on</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>update-alternatives: using /user/bin/dockerd-ce to provide /user/bin/dockerd <span class=o>(</span>dockerd<span class=o>)</span> in auto mode
+</code></pre></div><p>After 15 minutes of waiting with no update, I manually killed the <code>dockerd</code>
+process with <code>$ sudo kill -9 $(pidof dockerd)</code>. This let the update finish, but
+of course the docker package and a few others were left in a broken state.
+This had to be fixed with a <code>$ sudo dpkg –configure –a</code>.</p><p>Keep an eye on Docker! This won&rsquo;t be the last time it has an issue&mldr;</p><p>Upgrading to DGXOS 4 was pretty straightforward. There were a few file conflicts
+(/etc/systemd/system/docker.service.d/docker-override.conf,
+/etc/NetworkManager/NetworkManager.conf, and /etc/ssh/ssh_config) but nothing
+unexpected. It&rsquo;s a good idea to keep the local ssh_config of course, but I
+updated the others. As it turned out, however, the change of</p><div class=highlight><pre class=chroma><code class=language-fallback data-lang=fallback>[ifupddown]
+managed=false
+</code></pre></div><p>in NetworkManager.conf meant that the ethernet interface wouldn&rsquo;t connect to the
+network after I rebooted into DGXOS 4. Changing this back to <code>managed=true</code>
+and following up with <code>$ sudo service network-manager restart</code> fixed the
+connection issue in just a few moments though.</p><p>Upgrading to DGXOS 5 was even simpler. For the few file conflicts, it made sense
+to accept the package maintainer&rsquo;s version (except still for ssh_config).</p><p>Following the login, I got a message that language support was incomplete. This
+was a straightforward fix &ndash; just follow the graphical prompts and the packages
+were installed in just a few moments.</p><p>There were also a lot of temporary repo sources left behind -
+<code>$ sudo apt update</code> warned of repos being duplicated in multiple files.</p><p>Inside /etc/apt/sources.list.d</p><div class=highlight><pre class=chroma><code class=language-fallback data-lang=fallback>dgxstation-bionic-r418-cuda-10-1-repo.list
+dgxstation-bionic-r418-cuda-10-1-repo.list.distUpgrade
+dgxstation.list
+dgxstation.list.distUpgrade
+dgxstation.list.dpkg-old
+dgxstation.list.save
+docker.list.distUpgrade
+docker.list.dpkg-old
+docker.list.save
+google-chrome.list.distUpgrade
+google-chrome.list.save
+nv-rel-upgrade-temp.list
+nv-redl-upgrade-temp.list-distUpgrade
+ubuntu-esm-infra-list.distUpgrade
+</code></pre></div><p>In addition, there were &ldquo;sources.list.distUpgrade&rdquo; and &ldquo;sources.list.save&rdquo; in
+/etc/apt/.</p><p>All of these were moved out of /etc/apt/sources.list.d and into an archive directory.
+Most of them referred back to Ubuntu 16.04 (Xenial) or 18.04 (Bionic).
+However, &ldquo;nv-rel-upgrade-temp.list.distUpgrade&rdquo; was identical to
+&ldquo;nv-rel-upgrade-temp.list&rdquo;. Furthermore, the contents of
+&ldquo;nv-rel-upgrade-temp.list&rdquo; were distributed to &ldquo;dgx.list&rdquo; (Ubuntu sources) and
+&ldquo;cuda-compute-repo.list&rdquo; (NVidiea CUDA sources).</p><p>This left the following files in /etc/apt/sources.list.d/</p><div class=highlight><pre class=chroma><code class=language-fallback data-lang=fallback>cuda-compute-repo.list
+dgx.list
+docker.list
+google-chrome.list
+ubuntu-esm-infra.list
+</code></pre></div><p>and, of course, the file &ldquo;/etc/apt/sources.list&rdquo;.</p><p>Of these, &ldquo;docker.list&rdquo; was disabled during the upgrade process, and I left it
+this way as Nvidia
+<a href=https://docs.nvidia.com/dgx/dgx-station-user-guide/index.html#updating-exclusive-dgx-station-software>recommends</a>
+avoiding installing docker from any location but their own repos.</p><p>Despite the system upgrades, Nvidia-Docker and the Docker CE engine were still
+the old versions. Nvidia provides upgrade instructions
+<a href=https://docs.nvidia.com/dgx/nvidia-container-runtime-upgrade/index.html>here</a>
+to replace <code>nvidia-docker</code> with <code>nvidia-docker2</code>. However, each time I tried to
+install <code>nvidia-docker2</code> as per the instructions, I received this lovely
+error</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>$ sudo apt install nvidia-docker2
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+The following additional packages will be installed:
+  libnvidia-container-tools libnvidia-container1 nvidia-container-runtime nvidia-container-toolkit
+The following packages will be REMOVED:
+  nvidia-docker
+The following NEW packages will be installed:
+  libnvidia-container-tools libnvidia-container1 nvidia-container-runtime nvidia-container-toolkit nvidia-docker2
+<span class=m>0</span> upgraded, <span class=m>5</span> newly installed, <span class=m>1</span> to remove and <span class=m>4</span> not upgraded.
+Need to get <span class=m>0</span> B/1,471 kB of archives.
+After this operation, 9,341 kB disk space will be freed.
+Do you want to <span class=k>continue</span>? <span class=o>[</span>Y/n<span class=o>]</span> y
+<span class=o>(</span>Reading database ... <span class=m>296245</span> files and directories currently installed.<span class=o>)</span>
+Removing nvidia-docker <span class=o>(</span>1.0.1-4<span class=o>)</span> ...
+Stopping GPU container: 3d7877189077
+Committing GPU container changes to e686d36e1dc8-3d7877189077
+dpkg: error processing package nvidia-docker <span class=o>(</span>--remove<span class=o>)</span>:
+installed nvidia-docker package pre-removal script subprocess returned error <span class=nb>exit</span> status <span class=m>1</span>
+dpkg: too many errors, stopping
+Errors were encountered <span class=k>while</span> processing:
+nvidia-docker
+Processing was halted because there were too many errors.
+E: Sub-process /usr/bin/dpkg returned an error code <span class=o>(</span>1<span class=o>)</span>
+</code></pre></div><p>Could this have been due to the failed Docker update back in the intial stages
+that broke a package? I&rsquo;m really not sure. But in any case, it meant we were
+still stuck with the older versions of Docker.</p><p>After trying a few different ways to get this to work, I finally went with the
+not-so-preferred option of removing the package info.</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>sudo rm -rf /var/lib/dpkg/info/nvidia-docker.*
+</code></pre></div><p>Finally, the update worked! The old <code>nvidia-docker</code> package was still hanging
+around, so I have to manually remove it as well</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>sudo apt install nvidia-docker2
+sudo apt –purge autoremove nvidia-docker
+</code></pre></div><p>But of course, that wasn&rsquo;t quite the end of it. Nvidia Docker had been updated,
+but the Docker Engine itself was left over from Ubuntu Bionic (DGXOS 4).
+Uninstalling and reinstalling everything finally brought Docker up to speed.</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>sudo apt autoremove nvidia-docker2  <span class=c1># also removed docker-ce</span>
+sudo apt install nvidia-docker2 nv-docker-options  <span class=c1># re-installed docker-ce and dependencies</span>
+</code></pre></div><p>After installing Singularity, our DGX Station is now finally able to run the
+latest TensorFlow versions!</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>20/20 <span class=o>[==============================]</span> - ETA: 0s - loss: 14.8231 - dice_coef_pos: 0.0442 - dice_coef: 0.0300
+Epoch 00001: val_loss improved from inf to 14.57323, saving model to /weights/20210618_151214_temp.h5
+</code></pre></div></div><div class=post-footer><div class=info><span class=separator><a class=category href=/Deep-Learning-Notes/categories/deep-learning/>deep learning</a></span>
+<span class=separator><a class=tag href=/Deep-Learning-Notes/tags/hardware/>hardware</a></span></div></div></div></div></div></div><script>MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$'],['\\[','\\]']],processEscapes:!0,processEnvironments:!0},options:{skipHtmlTags:['script','noscript','style','textarea','pre']}},window.addEventListener('load',a=>{document.querySelectorAll("mjx-container").forEach(function(a){a.parentElement.classList+='has-jax'})})</script><script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script><script type=text/javascript id=MathJax-script async src=https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js></script></body></html>
