@@ -30,9 +30,9 @@ class SimpleModel:
 
     def model(self):
         inpt = tf.keras.layers.Input(shape=(64, 128, 128, 2))
+        # Reduce dimensions by factor of 2
         inpt = tf.keras.layers.AveragePooling3D()(inpt)
 
-        # Reduce dimensions by factor of 2
         c = tf.keras.layers.Conv3D(filters=2,
                                    kernel_size=3,
                                    padding='same')(inpt)
