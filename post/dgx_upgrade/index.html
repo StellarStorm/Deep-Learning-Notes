@@ -11,10 +11,10 @@ Docker or Singularity images.</p><p>The
 is rather good in listing the steps needed and possible conflicts during the
 upgrade process.
 However, I ran into a few unexpected snags that are worth documenting. During
-the initial <code>apt full-upgrade</code> to bring the DGXOS 3 up to the latest packages
+the initial <code>$ apt full-upgrade</code> to bring the DGXOS 3 up to the latest packages
 within that series, the upgrade process got hung on</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>update-alternatives: using /user/bin/dockerd-ce to provide /user/bin/dockerd <span class=o>(</span>dockerd<span class=o>)</span> in auto mode
 </code></pre></div><p>After 15 minutes of waiting with no update, I manually killed the <code>dockerd</code>
-process with <code>$ sudo kill -9 $(pidof dockerd)</code>. This let the update finish, but
+process with <code>\$ sudo kill -9 \$(pidof dockerd)</code> . This let the update finish, but
 of course the docker package and a few others were left in a broken state.
 This had to be fixed with a <code>$ sudo dpkg –configure –a</code>.</p><p>Keep an eye on Docker! This won&rsquo;t be the last time it has an issue&mldr;</p><p>Upgrading to DGXOS 4 was pretty straightforward. There were a few file conflicts
 (/etc/systemd/system/docker.service.d/docker-override.conf,
