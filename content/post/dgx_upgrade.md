@@ -29,7 +29,7 @@ update-alternatives: using /user/bin/dockerd-ce to provide /user/bin/dockerd (do
 ```
 
 After 15 minutes of waiting with no update, I manually killed the `dockerd`
-process with `$ sudo kill -9 $(pidof dockerd)`. This let the update finish, but
+process with `\$ sudo kill -9 \$(pidof dockerd)` . This let the update finish, but
 of course the docker package and a few others were left in a broken state.
 This had to be fixed with a `$ sudo dpkg –configure –a`.
 
