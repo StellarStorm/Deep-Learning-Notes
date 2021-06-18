@@ -21,7 +21,7 @@ The
 is rather good in listing the steps needed and possible conflicts during the
 upgrade process.
 However, I ran into a few unexpected snags that are worth documenting. During
-the initial `apt full-upgrade` to bring the DGXOS 3 up to the latest packages
+the initial `$ apt full-upgrade` to bring the DGXOS 3 up to the latest packages
 within that series, the upgrade process got hung on
 
 ```bash
@@ -62,6 +62,7 @@ There were also a lot of temporary repo sources left behind -
 `$ sudo apt update` warned of repos being duplicated in multiple files.
 
 Inside /etc/apt/sources.list.d
+
 ```code
 dgxstation-bionic-r418-cuda-10-1-repo.list
 dgxstation-bionic-r418-cuda-10-1-repo.list.distUpgrade
