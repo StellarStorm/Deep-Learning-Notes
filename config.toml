@@ -18,6 +18,7 @@ pygmentsCodefencesGuessSyntax = true
 [params]
 title = "Skylar's Programming Notes"
 author = "Skylar Gay"
+description = "from . import skykit-learn"
 profilePicture = "images/profile.jpg"
 favicon = "favicons/"
 mainSections = ["post"]
