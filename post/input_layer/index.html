@@ -12,9 +12,9 @@ do something like this:</p><div class=highlight><pre class=chroma><code class=la
 
     <span class=k>def</span> <span class=nf>model</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
         <span class=n>inpt</span> <span class=o>=</span> <span class=n>tf</span><span class=o>.</span><span class=n>keras</span><span class=o>.</span><span class=n>layers</span><span class=o>.</span><span class=n>Input</span><span class=p>(</span><span class=n>shape</span><span class=o>=</span><span class=p>(</span><span class=mi>64</span><span class=p>,</span> <span class=mi>128</span><span class=p>,</span> <span class=mi>128</span><span class=p>,</span> <span class=mi>2</span><span class=p>))</span>
+        <span class=c1># Reduce dimensions by factor of 2</span>
         <span class=n>inpt</span> <span class=o>=</span> <span class=n>tf</span><span class=o>.</span><span class=n>keras</span><span class=o>.</span><span class=n>layers</span><span class=o>.</span><span class=n>AveragePooling3D</span><span class=p>()(</span><span class=n>inpt</span><span class=p>)</span>
 
-        <span class=c1># Reduce dimensions by factor of 2</span>
         <span class=n>c</span> <span class=o>=</span> <span class=n>tf</span><span class=o>.</span><span class=n>keras</span><span class=o>.</span><span class=n>layers</span><span class=o>.</span><span class=n>Conv3D</span><span class=p>(</span><span class=n>filters</span><span class=o>=</span><span class=mi>2</span><span class=p>,</span>
                                    <span class=n>kernel_size</span><span class=o>=</span><span class=mi>3</span><span class=p>,</span>
                                    <span class=n>padding</span><span class=o>=</span><span class=s1>&#39;same&#39;</span><span class=p>)(</span><span class=n>inpt</span><span class=p>)</span>
